@@ -6,6 +6,7 @@ import net.minecraft.network.chat.Component
 import net.minecraft.network.chat.Style
 import net.sbo.mod.SBOKotlin
 import net.sbo.mod.SBOKotlin.mc
+import net.sbo.mod.guis.graphs.Graph
 import net.sbo.mod.guis.partyfinder.PartyFinderGUI
 import net.sbo.mod.utils.chat.Chat
 import net.sbo.mod.utils.events.Register
@@ -21,6 +22,7 @@ object Guis {
     private var pastEventsGui: PastEventsGui? = null
     var achievementsGui: AchievementsGUI? = null
     private var soundGui: SoundGUI? = null
+    private var graphGui: Graph? = null
 
 //    private var vexelGui: VexelTest? = null
     private var updating = false
@@ -109,6 +111,16 @@ object Guis {
                 }
                 UScreen.displayScreen(pastEventsGui!!)
             }
+        }
+
+        Register.command("sbopastdianaplaytime", "sbopdp") {
+           mc.schedule {
+               if (graphGui == null) {
+                   graphGui = object : Graph("Graph", "This is a Graph", 50, 60) {}
+               }
+
+               graphGui?.open()
+           }
         }
 
         Register.onTick(20) {

@@ -1,0 +1,82 @@
+:root {
+    --accent: #5b8def;
+    --bg: #141414;
+    --title: #202020;
+    --border: #303030;
+    --graph-bg: #070317;
+    --line-color: #1E1E1E;
+}
+
+body {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.window {
+    display: flex;
+    flex-direction: column;
+    width: 50vw;
+    height: 50vh;
+    background-color: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    overflow: hidden;
+}
+
+.titlebar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 4px 6px 4px 10px;
+    background-color: var(--title);
+    border-bottom: 1px solid var(--border);
+}
+
+.title {
+    font-weight: bold;
+}
+
+.close {
+    padding: 1px 5px;
+    background-color: transparent;
+    border-color: transparent;
+}
+
+.close:hover {
+    background-color: #da373c;
+}
+
+.body {
+    display: flex;
+    flex-grow: 1;
+    min-height: 0;
+    justify-content: center;
+    align-items: center;
+}
+
+.graph {
+    background-color: var(--graph-bg);
+    width: 80%;
+    height: 80%;
+    position: relative;
+}
+
+.line {
+    background-color: var(--line-color);
+    position: absolute;
+}
+
+.x-axis-line {
+    width: 80%;
+    height: 1px;
+    bottom: 25px;
+    left: 25px;
+}
+
+.y-axis-line {
+    width: 1px;
+    height: 80%;
+    bottom: 25px;
+    left: 25px;
+}
