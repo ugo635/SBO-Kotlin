@@ -6,7 +6,9 @@ import net.minecraft.network.chat.Component
 import net.minecraft.network.chat.Style
 import net.sbo.mod.SBOKotlin
 import net.sbo.mod.SBOKotlin.mc
+import net.sbo.mod.guis.graphs.DataPoint
 import net.sbo.mod.guis.graphs.Graph
+import net.sbo.mod.guis.graphs.ProfitGraph
 import net.sbo.mod.guis.partyfinder.PartyFinderGUI
 import net.sbo.mod.utils.chat.Chat
 import net.sbo.mod.utils.events.Register
@@ -116,16 +118,7 @@ object Guis {
         Register.command("sbopastdianaplaytime", "sbopdp") {
            mc.schedule {
                if (graphGui == null) {
-                   graphGui = object : Graph(
-                       "Graph",
-                       "This is a Graph",
-                       "X Value",
-                       "Y Value",
-                       -10,
-                       10,
-                       -10,
-                       10
-                   ) {}
+                   graphGui = ProfitGraph()
                }
 
                graphGui?.open()

@@ -17,12 +17,21 @@ body {
 .window {
     display: flex;
     flex-direction: column;
-    width: 50vw;
-    height: 50vh;
+    flex-shrink: 0;
+    /* width and height removed: the window now fits its content */
     background-color: var(--bg);
     border: 1px solid var(--border);
     border-radius: 6px;
     overflow: hidden;
+}
+
+.body {
+    display: flex;
+    flex-grow: 1;
+    min-height: 0;
+    justify-content: center;
+    align-items: center;
+    padding: 2vmin; /* margin around the graph, scales with the screen */
 }
 
 .titlebar {
@@ -48,55 +57,65 @@ body {
     background-color: #da373c;
 }
 
-.body {
-    display: flex;
-    flex-grow: 1;
-    min-height: 0;
-    justify-content: center;
-    align-items: center;
-}
-
+/* Size and font-size are set inline from graphWidth / graphHeight (in vmin).
+   Everything inside is sized in em or % so it scales with the graph. */
 .graph {
     background-color: var(--graph-bg);
-    width: 80%;
-    height: 80%;
     position: relative;
+    flex-shrink: 0; /* keep the aspect ratio the line maths relies on */
 }
 
+/* Positions and sizes of lines, axes, ticks and labels are set inline */
 .line {
     background-color: var(--line-color);
     position: absolute;
 }
 
-.x-axis-line {
-    width: 80%;
-    height: 1px;
-    bottom: 25px;
-    left: 25px;
+.data-line {
+    background-color: var(--accent);
+    z-index: 1;
 }
 
-.y-axis-line {
-    width: 1px;
-    height: 80%;
-    bottom: 25px;
-    left: 25px;
+.tick {
+    background-color: var(--axis-label-content);
 }
 
 .axis-label {
     position: absolute;
 }
 
-.x-axis-label {
-    bottom: 20px;
-    right: 20px;
-}
-
-.y-axis-label {
-    top: 3px;
-    left: 20px;
+.tick-label {
+    position: absolute;
 }
 
 .axis-label-content {
     color: var(--axis-label-content);
-    font-size: 6px;
+    /* no font-size: inherited from .graph so it scales */
+}
+
+.dot {
+    position: absolute;
+    border-radius: 50%;
+    background-color: var(--accent);
+    z-index: 2;
+}
+
+.dot:hover {
+    background-color: #ffffff;
+}
+
+.legend {
+    position: absolute;
+    top: 0.3em;
+    right: 0.5em;
+    display: flex;
+    align-items: center;
+    gap: 0.4em;
+}
+
+.legend-dot {
+    width: 0.7em;
+    height: 0.7em;
+    border-radius: 50%;
+    background-color: var(--accent);
 }
