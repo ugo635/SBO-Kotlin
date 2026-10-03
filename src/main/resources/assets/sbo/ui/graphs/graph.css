@@ -1,11 +1,18 @@
 :root {
-    --accent: #5b8def;
-    --bg: #141414;
-    --title: #202020;
-    --border: #303030;
-    --graph-bg: #070317;
-    --line-color: #1E1E1E;
-    --axis-label-content: #505050;
+    --accent: #c084fc;
+    --bg: #12071f;
+    --title: #1d0a30;
+    --border: #61308a;
+    --graph-bg: #0c0318;
+    --line-color: #5b2380;
+    --data-color: #c02cff;
+    --data-color-light: #d86aff;
+    --data-color-dark: #8f18d4;
+    --data-highlight: #f0c4ff;
+    --flashy-border: #e0a0ff;
+    --data-shadow: 0 0 8px var(--data-color), 0 0 16px rgba(192, 44, 255, 0.75), 0 0 28px rgba(143, 24, 212, 0.5);
+    --dot-shadow: 0 0 4px var(--data-color-light), 0 0 10px rgba(192, 44, 255, 0.8), 0 0 20px rgba(143, 24, 212, 0.55);
+    --axis-label-content: #b08bc2;
 }
 
 body {
@@ -20,8 +27,11 @@ body {
     flex-shrink: 0;
     background-color: var(--bg);
     border: 1px solid var(--border);
-    border-radius: 6px;
+    border-radius: 8px;
     overflow: hidden;
+    box-shadow:
+        0 10px 35px rgba(0, 0, 0, 0.45),
+        0 0 30px rgba(168, 85, 247, 0.06);
 }
 
 .body {
@@ -37,31 +47,55 @@ body {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 4px 6px 4px 10px;
+    padding: 5px 7px 5px 11px;
     background-color: var(--title);
     border-bottom: 1px solid var(--border);
 }
 
 .title {
     font-weight: bold;
+    color: #eee9f5;
 }
 
 .close {
     padding: 1px 5px;
     background-color: transparent;
     border-color: transparent;
+    border-radius: 4px;
+    color: #80788c;
+    transition:
+        background-color 0.15s ease,
+        color 0.15s ease,
+        box-shadow 0.15s ease;
 }
 
 .close:hover {
     background-color: #da373c;
+    color: #ffffff;
+    box-shadow: 0 0 12px rgba(218, 55, 60, 0.3);
 }
 
 /* Size and font-size are set inline from graphWidth / graphHeight (in vmin).
    Everything inside is sized in em or % so it scales with the graph. */
 .graph {
-    background-color: var(--graph-bg);
+    background:
+        radial-gradient(
+            circle at 70% 25%,
+            rgba(100, 40, 170, 0.08),
+            transparent 45%
+        ),
+        linear-gradient(
+            135deg,
+            #0b0614 0%,
+            #07030f 55%,
+            #0b0415 100%
+        );
     position: relative;
     flex-shrink: 0; /* keep the aspect ratio the line maths relies on */
+    border: 1px solid rgba(168, 85, 247, 0.09);
+    box-shadow:
+        inset 0 0 35px rgba(90, 35, 150, 0.07),
+        0 0 20px rgba(0, 0, 0, 0.35);
 }
 
 /* Positions and sizes of lines, axes, ticks and labels are set inline */
@@ -75,13 +109,22 @@ body {
     background-color: var(--axis-label-content);
 }
 
+.x-axis-line,
+.y-axis-line {
+    background-color: var(--line-color);
+    box-shadow:
+        0 0 4px rgba(192, 44, 255, 0.2);
+}
+
 .data-line {
-    background-color: var(--accent);
+    background-color: var(--data-color);
+    box-shadow: var(--data-shadow);
     z-index: 1;
 }
 
 .tick {
     background-color: var(--axis-label-content);
+    opacity: 0.6;
 }
 
 .axis-label {
@@ -95,17 +138,45 @@ body {
 .axis-label-content {
     color: var(--axis-label-content);
     /* no font-size: inherited from .graph so it scales */
+    text-shadow: 0 0 5px rgba(192, 44, 255, 0.1);
 }
 
 .dot {
     position: absolute;
     border-radius: 50%;
-    background-color: var(--accent);
+    background:
+        radial-gradient(
+            circle at 35% 30%,
+            var(--data-highlight) 0%,
+            var(--data-color-light) 20%,
+            var(--data-color) 50%,
+            var(--data-color-dark) 100%
+        );
     z-index: 2;
+    box-shadow: var(--dot-shadow);
+    transition:
+        transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275),
+        background-color 0.2s ease,
+        border-color 0.2s ease,
+        box-shadow 0.2s ease;
 }
 
 .dot:hover {
-    background-color: #ffffff;
+    background:
+        radial-gradient(
+            circle at 35% 30%,
+            #ffffff 0%,
+            var(--data-highlight) 22%,
+            var(--data-color-light) 50%,
+            var(--data-color) 100%
+        );
+    transform: scale(1.3);
+    border-color: #ffffff;
+    box-shadow:
+        0 0 6px #ffffff,
+        0 0 14px var(--data-highlight),
+        0 0 25px var(--data-color),
+        0 0 38px rgba(192, 44, 255, 0.6);
 }
 
 .legend {
@@ -115,16 +186,33 @@ body {
     display: flex;
     align-items: center;
     gap: 0.4em;
+    padding: 0.35em 0.6em;
+    border: 1px solid rgba(168, 85, 247, 0.12);
+    border-radius: 5px;
+    background-color: rgba(12, 6, 20, 0.82);
+    box-shadow:
+        0 4px 12px rgba(0, 0, 0, 0.3),
+        0 0 10px rgba(168, 85, 247, 0.04);
 }
 
 .legend-dot {
     width: 0.7em;
     height: 0.7em;
     border-radius: 50%;
-    background-color: var(--accent);
+    background:
+        radial-gradient(
+            circle at 35% 30%,
+            var(--data-highlight) 0%,
+            var(--data-color-light) 25%,
+            var(--data-color) 60%,
+            var(--data-color-dark) 100%
+        );
+    box-shadow: var(--dot-shadow);
 }
 
 /* Axis arrowheads (SVG tinted through currentColor) */
 .arrow-head {
     position: absolute;
+    color: #9b7eaa;
+    filter: drop-shadow(0 0 3px rgba(192, 44, 255, 0.2));
 }
