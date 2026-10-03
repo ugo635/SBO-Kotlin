@@ -5,6 +5,7 @@
     --border: #303030;
     --graph-bg: #070317;
     --line-color: #1E1E1E;
+    --axis-label-content: #505050;
 }
 
 body {
@@ -79,4 +80,23 @@ body {
     height: 80%;
     bottom: 25px;
     left: 25px;
+}
+
+.axis-label {
+    position: absolute;
+}
+
+.x-axis-label {
+    bottom: 20px;
+    right: 20px;
+}
+
+.y-axis-label {
+    top: 3px;
+    left: 20px;
+}
+
+.axis-label-content {
+    color: var(--axis-label-content);
+    font-size: 6px;
 }

@@ -116,7 +116,16 @@ object Guis {
         Register.command("sbopastdianaplaytime", "sbopdp") {
            mc.schedule {
                if (graphGui == null) {
-                   graphGui = object : Graph("Graph", "This is a Graph", 50, 60) {}
+                   graphGui = object : Graph(
+                       "Graph",
+                       "This is a Graph",
+                       "X Value",
+                       "Y Value",
+                       -10,
+                       10,
+                       -10,
+                       10
+                   ) {}
                }
 
                graphGui?.open()
