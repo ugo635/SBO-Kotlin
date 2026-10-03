@@ -4,6 +4,7 @@ import net.sbo.guilib.core.dom.component
 import net.sbo.guilib.core.dsl.NodeBuilder
 import net.sbo.guilib.core.dsl.button
 import net.sbo.guilib.core.dsl.div
+import net.sbo.guilib.core.dsl.img
 import net.sbo.guilib.core.dsl.span
 import net.sbo.guilib.fabric.GuiLib
 import java.util.Locale
@@ -21,8 +22,8 @@ abstract class Graph(
     var maxX: Int = 0,
     var minY: Int = 0,
     var maxY: Int = 0,
-    val graphWidth: Double = 60.0,   // in vmin
-    val graphHeight: Double = 36.0   // in vmin
+    val graphWidth: Double = 90.0,   // in vmin
+    val graphHeight: Double = 50.0   // in vmin
 ) {
     protected var points: List<DataPoint> = listOf()
         set(value) {
@@ -32,8 +33,8 @@ abstract class Graph(
     // Plot area, as fractions of the graph box
     protected val padLeft = 0.10
     protected val padBottom = 0.14
-    protected val padRight = 0.04
-    protected val padTop = 0.08
+    protected val padRight = 0.25   // room for arrow + x label
+    protected val padTop = 0.14     // room for arrow + y label
     protected val plotW = 1.0 - padLeft - padRight
     protected val plotH = 1.0 - padBottom - padTop
 
@@ -45,6 +46,12 @@ abstract class Graph(
     protected val labelWidth = 4.0
     protected val axisThickness = "max(1px, 0.15em)"
     protected val tickCount = 5
+
+    // Arrows (em)
+    protected val arrowExt = 1.4          // how far the axis extends past the last tick
+    protected val arrowSize = 1.0         // arrowhead box (square)
+    protected val arrowThickness = 0.15   // used to centre things on the axis
+    protected val arrowSrc = "sbo:ui/graphs/arrow-head.svg"
 
     protected val aspect = graphWidth / graphHeight
     protected val fontSize get() = minOf(graphWidth, graphHeight) * 0.045   // in vmin
@@ -83,46 +90,56 @@ abstract class Graph(
     }
 
     protected open fun NodeBuilder.drawAxis() {
+        // The axes stop inside the arrowheads, so nothing sticks out of the tips
+        val axisExt = arrowExt - arrowSize * 0.9
+
         div(
             className = "line x-axis-line",
-            style = "left: ${pct(padLeft)}; bottom: ${pct(padBottom)}; width: ${pct(plotW)}; height: $axisThickness"
+            style = "left: ${pct(padLeft)}; bottom: ${pct(padBottom)}; " +
+                    "width: calc(${pct(plotW)} + ${em(axisExt)}); height: $axisThickness"
         ) {}
         div(
             className = "line y-axis-line",
-            style = "left: ${pct(padLeft)}; bottom: ${pct(padBottom)}; width: $axisThickness; height: ${pct(plotH)}"
+            style = "left: ${pct(padLeft)}; bottom: ${pct(padBottom)}; " +
+                    "width: $axisThickness; height: calc(${pct(plotH)} + ${em(axisExt)})"
         ) {}
-    }
 
-    protected open fun NodeBuilder.drawDataPoints() {
-        for (point in points.filter { it.inRange() }) {
-            val x = fx(point.x)
-            val y = fy(point.y)
+        // X arrowhead: tip at the end of the x axis, centred on it
+        img(
+            src = arrowSrc,
+            className = "arrow-head",
+            style = "left: calc(${pct(padLeft + plotW)} + ${em(arrowExt - arrowSize)}); " +
+                    "bottom: calc(${pct(padBottom)} - ${em(arrowSize / 2 - arrowThickness / 2)}); " +
+                    "width: ${em(arrowSize)}; height: ${em(arrowSize)}"
+        )
 
-            val tooltip = point.tooltip
-                ?.replace("{x}", fmt(point.x))
-                ?.replace("{y}", fmt(point.y))
-
-            div(
-                className = "dot",
-                title = tooltip,
-                style = "left: calc(${pct(x)} - ${em(dotSize / 2)}); " +
-                        "bottom: calc(${pct(y)} - ${em(dotSize / 2)}); " +
-                        "width: ${em(dotSize)}; height: ${em(dotSize)}"
-            ) {}
-        }
+        // Y arrowhead: same file rotated to point up, tip at the end of the y axis
+        img(
+            src = arrowSrc,
+            className = "arrow-head",
+            style = "left: calc(${pct(padLeft)} + ${em(arrowThickness / 2 - arrowSize / 2)}); " +
+                    "bottom: calc(${pct(padBottom + plotH)} + ${em(arrowExt - arrowSize)}); " +
+                    "width: ${em(arrowSize)}; height: ${em(arrowSize)}; transform: rotate(-90deg)"
+        )
     }
 
     protected open fun NodeBuilder.drawAxisLabels() {
+        // Right of the x arrow, vertically centred on the axis
         div(
             className = "axis-label x-axis-label",
-            style = "bottom: calc(${pct(padBottom)} + 0.4em); right: calc(${pct(padRight)} + 0.4em)"
+            style = "left: calc(${pct(padLeft + plotW)} + ${em(arrowExt + 0.4)}); " +
+                    "bottom: calc(${pct(padBottom)} - ${em(labelHeight / 2 - arrowThickness / 2)}); " +
+                    "white-space: nowrap"
         ) {
             span(className = "axis-label-content") { +xAxisLabel }
         }
 
+        // Above the y arrow
         div(
             className = "axis-label y-axis-label",
-            style = "top: 0.3em; left: calc(${pct(padLeft)} + 0.4em)"
+            style = "left: ${pct(padLeft)}; " +
+                    "bottom: calc(${pct(padBottom + plotH)} + ${em(arrowExt + 0.3)}); " +
+                    "white-space: nowrap"
         ) {
             span(className = "axis-label-content") { +yAxisLabel }
         }
@@ -176,6 +193,25 @@ abstract class Graph(
 
     protected open fun addPoint(point: DataPoint) {
         points = points + point
+    }
+
+    protected open fun NodeBuilder.drawDataPoints() {
+        for (point in points.filter { it.inRange() }) {
+            val x = fx(point.x)
+            val y = fy(point.y)
+
+            val tooltip = point.tooltip
+                ?.replace("{x}", fmt(point.x))
+                ?.replace("{y}", fmt(point.y))
+
+            div(
+                className = "dot",
+                title = tooltip,
+                style = "left: calc(${pct(x)} - ${em(dotSize / 2)}); " +
+                        "bottom: calc(${pct(y)} - ${em(dotSize / 2)}); " +
+                        "width: ${em(dotSize)}; height: ${em(dotSize)}"
+            ) {}
+        }
     }
 
     protected open fun NodeBuilder.drawPointLinkingLines() {
