@@ -41,6 +41,9 @@ object DataManager {
     @JvmField @DataField("pastDianaEvents.json")
     var pastDianaEventsData: PastDianaEventsData = PastDianaEventsData()
 
+    @JvmField @DataField("dianaEventDays.json")
+    var dianaEventDaysData: DianaEventDaysData = DianaEventDaysData()
+
     @JvmField @DataField("dianaTrackerTotal.json")
     var dianaTrackerTotalData: DianaTrackerTotalData = DianaTrackerTotalData()
 

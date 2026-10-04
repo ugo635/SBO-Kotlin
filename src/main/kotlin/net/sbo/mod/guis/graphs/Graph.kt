@@ -45,7 +45,7 @@ abstract class Graph(
     protected val labelHeight = 1.2
     protected val labelWidth = 4.0
     protected val axisThickness = "max(1px, 0.15em)"
-    protected val tickCount = 5
+    protected var tickCount = 5
 
     // Arrows (em)
     protected val arrowExt = 1.4          // how far the axis extends past the last tick

@@ -34,6 +34,7 @@ import net.sbo.mod.utils.*
 import net.sbo.mod.utils.chat.Chat
 import net.sbo.mod.utils.data.DataManager
 import net.sbo.mod.utils.events.*
+import net.sbo.mod.utils.game.DianaEventDays
 import net.sbo.mod.utils.game.InventoryUtils
 import net.sbo.mod.utils.game.Mayor
 import net.sbo.mod.utils.game.TabList
@@ -133,6 +134,7 @@ object SBOKotlin : ClientModInitializer {
 		DianaMobs.init()
 		DianaMobDetect.init()
 		DianaLoot.init()
+		DianaEventDays.init()
 		AchievementManager.init()
 		MessageHider.init()
 		SphinxSolver.init()

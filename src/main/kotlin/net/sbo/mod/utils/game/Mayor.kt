@@ -16,6 +16,8 @@ object Mayor {
     private const val DAYS_IN_MONTH = 31
     private const val ELECTION_DAY = 27
     private const val ELECTION_MONTH = 3
+    private const val SECONDS_PER_YEAR = SECONDS_PER_MONTH * MONTHS_IN_YEAR
+    private const val DAY_MS = 86_400_000L
 
     private const val FALLBACK_MAYOR = "Diana"
     private const val FALLBACK_PERK = "Mythological Ritual"
@@ -35,10 +37,30 @@ object Mayor {
     private var outDatedApi: Boolean = false
     var mayorElectedYear = 0
 
+    /** True when the current mayor is Diana. Note: the API-error fallback also sets Diana. */
+    val isDiana: Boolean get() = mayor == "Diana" || ministerPerk == FALLBACK_PERK
+
     fun init() {
         refreshMayorData()
         Register.onTick(20 * 60) { refreshMayorData() }
     }
+
+    /**
+     * Real time (ms) at which the current mayor term started: the last Late Spring 27th, 00:00.
+     * Computed from the clock only, so it is correct even if the mayor API has not refreshed yet.
+     */
+    fun currentTermStartMillis(now: Long = System.currentTimeMillis()): Long {
+        // SKYBLOCK_EPOCH is 6:00 on Early Spring 1st of year 1, so year 1 starts 6 SkyBlock hours earlier
+        val year1Start = SKYBLOCK_EPOCH - 6 * SECONDS_PER_HOUR
+        val electionOffset = ((ELECTION_MONTH - 1) * DAYS_IN_MONTH + (ELECTION_DAY - 1)) * SECONDS_PER_DAY
+        val firstElectionEnd = year1Start + electionOffset
+        val years = floor((now / 1000.0 - firstElectionEnd) / SECONDS_PER_YEAR)
+        return ((firstElectionEnd + years * SECONDS_PER_YEAR) * 1000).toLong()
+    }
+
+    /** 0 = first 24 h of the current term, 1 = next 24 h, ... (a term lasts 5 days 4 h, so 0..5). */
+    fun eventDay(now: Long = System.currentTimeMillis()): Int =
+        ((now - currentTermStartMillis(now)) / DAY_MS).toInt()
 
     private fun refreshMayorData() {
         skyblockDateString = calcSkyblockDate(System.currentTimeMillis())

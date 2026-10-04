@@ -117,11 +117,8 @@ object Guis {
 
         Register.command("sbopastdianaplaytime", "sbopdp") {
            mc.schedule {
-               if (graphGui == null) {
-                   graphGui = ProfitGraph()
-               }
-
-               graphGui?.open()
+               graphGui = ProfitGraph()
+               graphGui!!.open()
            }
         }
 
