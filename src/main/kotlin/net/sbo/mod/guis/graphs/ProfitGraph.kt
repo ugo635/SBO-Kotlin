@@ -25,7 +25,8 @@ class ProfitGraph : Graph(
    private fun getDataPoints(): List<DataPoint> {
       // Outside a Diana term the tracker totals belong to an old event, so show nothing
       if (!Mayor.isDiana) return emptyList()
-      return DianaEventDays.currentEventStats().map { it.toPoint() }
+      val points = DianaEventDays.currentEventStats().map { it.toPoint() }
+      return if (points.any { it.x == 0.0 }) points else listOf(DataPoint(0.0, 0.0)) + points
    }
 
    private fun DayStats.toPoint(): DataPoint {
